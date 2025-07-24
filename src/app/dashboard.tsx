@@ -16,8 +16,7 @@ import {
   getLevelProgress, 
   formatDuration, 
   formatRelativeTime,
-  getBadgeRarityColor,
-  getStatusColor
+  getBadgeRarityColor
 } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -65,7 +64,7 @@ export default function Dashboard() {
           <div>
             <h1 className="text-2xl font-bold">Welcome back, {currentUser.name.split(' ')[0]}!</h1>
             <p className="text-blue-100 mt-1">
-              You're currently at Level {userLevel.level} ({userLevel.name}) with {currentUser.creditBalance} credits
+              You&apos;re currently at Level {userLevel.level} ({userLevel.name}) with {currentUser.creditBalance} credits
             </p>
           </div>
           <div className="hidden md:block">

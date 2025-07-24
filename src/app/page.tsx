@@ -17,8 +17,7 @@ import {
   getLevelProgress, 
   formatDuration, 
   formatRelativeTime,
-  getBadgeRarityColor,
-  getStatusColor
+  getBadgeRarityColor
 } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -70,7 +69,7 @@ export default function Dashboard() {
               {currentUser.role === 'admin' ? (
                 <>You have admin access to manage the time bank system</>
               ) : (
-                <>You're currently at Level {userLevel.level} ({userLevel.name}) with {currentUser.creditBalance} credits</>
+                <>You&apos;re currently at Level {userLevel.level} ({userLevel.name}) with {currentUser.creditBalance} credits</>
               )}
             </p>
           </div>

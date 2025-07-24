@@ -16,11 +16,9 @@ import {
 import { 
   formatDuration, 
   formatRelativeTime,
-  getStatusColor,
-  calculateCredits
+  getStatusColor
 } from '@/lib/utils';
 import Link from 'next/link';
-import { AUTOMATION_CATEGORIES } from '@/types';
 
 export default function AutomationsPage() {
   const { currentUser, getUserAutomations } = useAppStore();

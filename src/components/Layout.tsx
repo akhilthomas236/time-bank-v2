@@ -13,8 +13,7 @@ import {
   Bell,
   LogOut,
   ChevronDown,
-  BarChart3,
-  Award
+  BarChart3
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { cn, getAvatarFallback, calculateUserLevel, getLevelProgress } from '@/lib/utils';
@@ -41,7 +40,7 @@ const adminNavigation = [
 
 export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
-  const { currentUser, getUserNotifications, getUnreadNotificationCount } = useAppStore();
+  const { currentUser, getUnreadNotificationCount } = useAppStore();
   
   if (!currentUser) {
     return <div>Loading...</div>;

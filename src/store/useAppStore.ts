@@ -4,12 +4,9 @@ import {
   User, 
   Automation, 
   Redemption, 
-  Reward, 
   Activity, 
   CreditTransaction,
-  Challenge,
   Notification,
-  LeaderboardEntry,
   AppState 
 } from '@/types';
 import {
@@ -102,7 +99,7 @@ export const useAppStore = create<AppStore>()(
         });
       },
 
-      updateAutomationStatus: (automationId: string, status: 'approved' | 'rejected', managerId?: string) => {
+      updateAutomationStatus: (automationId: string, status: 'approved' | 'rejected') => {
         set((state) => {
           const automation = state.automations.find(a => a.id === automationId);
           if (!automation) return state;

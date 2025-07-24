@@ -7,25 +7,21 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  BarChart3, 
   TrendingUp, 
   Users, 
   Clock, 
   Award, 
-  Calendar,
-  Filter,
   Download,
   AlertCircle,
   Target,
   Zap,
   Gift
 } from 'lucide-react';
-import { formatDuration, formatRelativeTime, getDepartmentColor } from '@/lib/utils';
+import { formatDuration, getDepartmentColor } from '@/lib/utils';
 
 export default function AdminAnalyticsPage() {
   const { currentUser, users, automations, redemptions, rewards, transactions } = useAppStore();
   const [selectedTimeRange, setSelectedTimeRange] = useState('all');
-  const [selectedDepartment, setSelectedDepartment] = useState('all');
 
   // Check admin access
   if (!currentUser || currentUser.role !== 'admin') {
@@ -83,7 +79,14 @@ export default function AdminAnalyticsPage() {
     acc[user.department].creditsSpent += userRedemptions.reduce((sum, r) => sum + r.creditsCost, 0);
     
     return acc;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, {
+    users: number;
+    automations: number;
+    creditsEarned: number;
+    creditsSpent: number;
+    timeSaved: number;
+    redemptions: number;
+  }>);
 
   // Time-based trends (simplified monthly data)
   const monthlyData = [
@@ -113,7 +116,12 @@ export default function AdminAnalyticsPage() {
       acc[automation.category].creditsEarned += automation.creditsEarned;
       acc[automation.category].avgTimeSaved = acc[automation.category].timeSaved / acc[automation.category].count;
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, {
+      count: number;
+      timeSaved: number;
+      creditsEarned: number;
+      avgTimeSaved: number;
+    }>);
 
   // Reward category analysis
   const rewardCategoryStats = rewards.reduce((acc, reward) => {
@@ -135,7 +143,13 @@ export default function AdminAnalyticsPage() {
     acc[reward.category].avgCost = acc[reward.category].creditsSpent / (acc[reward.category].redemptions || 1);
     
     return acc;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, {
+    totalRewards: number;
+    redemptions: number;
+    creditsSpent: number;
+    avgCost: number;
+    popularity: number;
+  }>);
 
   // Top performers
   const topPerformers = users
@@ -267,8 +281,15 @@ export default function AdminAnalyticsPage() {
             <CardContent>
               <div className="space-y-6">
                 {Object.entries(departmentStats)
-                  .sort((a: any, b: any) => b[1].timeSaved - a[1].timeSaved)
-                  .map(([dept, stats]: [string, any]) => (
+                  .sort((a: [string, { timeSaved: number }], b: [string, { timeSaved: number }]) => b[1].timeSaved - a[1].timeSaved)
+                  .map(([dept, stats]: [string, {
+                    users: number;
+                    automations: number;
+                    creditsEarned: number;
+                    creditsSpent: number;
+                    timeSaved: number;
+                    redemptions: number;
+                  }]) => (
                   <div key={dept} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -321,8 +342,13 @@ export default function AdminAnalyticsPage() {
             <CardContent>
               <div className="space-y-4">
                 {Object.entries(categoryStats)
-                  .sort((a: any, b: any) => b[1].timeSaved - a[1].timeSaved)
-                  .map(([category, stats]: [string, any]) => (
+                  .sort((a: [string, { timeSaved: number }], b: [string, { timeSaved: number }]) => b[1].timeSaved - a[1].timeSaved)
+                  .map(([category, stats]: [string, {
+                    count: number;
+                    timeSaved: number;
+                    creditsEarned: number;
+                    avgTimeSaved: number;
+                  }]) => (
                   <div key={category} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="space-y-1">
                       <h4 className="font-semibold">{category}</h4>
@@ -350,8 +376,14 @@ export default function AdminAnalyticsPage() {
             <CardContent>
               <div className="space-y-4">
                 {Object.entries(rewardCategoryStats)
-                  .sort((a: any, b: any) => b[1].creditsSpent - a[1].creditsSpent)
-                  .map(([category, stats]: [string, any]) => (
+                  .sort((a: [string, { creditsSpent: number }], b: [string, { creditsSpent: number }]) => b[1].creditsSpent - a[1].creditsSpent)
+                  .map(([category, stats]: [string, {
+                    totalRewards: number;
+                    redemptions: number;
+                    creditsSpent: number;
+                    avgCost: number;
+                    popularity: number;
+                  }]) => (
                   <div key={category} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="space-y-1">
                       <h4 className="font-semibold capitalize">{category.replace('-', ' ')}</h4>
@@ -387,7 +419,7 @@ export default function AdminAnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {monthlyData.map((month, index) => (
+                  {monthlyData.map((month) => (
                     <div key={month.month} className="flex items-center gap-4">
                       <div className="w-12 text-sm font-medium text-gray-600">
                         {month.month}

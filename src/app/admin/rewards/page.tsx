@@ -11,7 +11,6 @@ import {
   Users, 
   TrendingUp,
   Search,
-  Filter,
   Download,
   Eye,
   Edit,
@@ -21,10 +20,19 @@ import {
   Clock,
   Star
 } from 'lucide-react';
-import { formatRelativeTime } from '@/lib/utils';
+
+import { Reward } from '@/types';
+
+interface RewardWithAnalytics extends Reward {
+  totalRedemptions: number;
+  approvedRedemptions: number;
+  pendingRedemptions: number;
+  totalCreditsSpent: number;
+  redemptionRate: number;
+}
 
 export default function AdminRewardsPage() {
-  const { currentUser, rewards, redemptions, users } = useAppStore();
+  const { currentUser, rewards, redemptions } = useAppStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -73,7 +81,7 @@ export default function AdminRewardsPage() {
   // Sort by popularity
   const popularRewards = [...rewardAnalytics].sort((a, b) => b.totalRedemptions - a.totalRedemptions);
 
-  const RewardCard = ({ reward }: { reward: any }) => {
+  const RewardCard = ({ reward }: { reward: RewardWithAnalytics }) => {
     return (
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader>
@@ -281,9 +289,9 @@ export default function AdminRewardsPage() {
           <div className="grid gap-6">
             {filteredRewards.map(reward => {
               const analytics = rewardAnalytics.find(r => r.id === reward.id);
-              return (
+              return analytics ? (
                 <RewardCard key={reward.id} reward={analytics} />
-              );
+              ) : null;
             })}
           </div>
         </TabsContent>

@@ -73,7 +73,7 @@ export interface Activity {
   type: 'automation_submitted' | 'automation_approved' | 'credits_earned' | 'redemption_requested' | 'redemption_approved' | 'badge_earned' | 'level_up';
   description: string;
   timestamp: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Analytics types

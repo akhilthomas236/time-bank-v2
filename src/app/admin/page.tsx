@@ -9,14 +9,11 @@ import {
   BarChart3,
   PieChart,
   Award,
-  Calendar,
-  Filter,
   Download
 } from 'lucide-react';
 import { 
   formatDuration, 
   formatRelativeTime,
-  getStatusColor,
   getDepartmentColor,
   calculateROI
 } from '@/lib/utils';
@@ -29,25 +26,10 @@ export default function AdminDashboard() {
     automations, 
     redemptions, 
     rewards,
-    transactions,
-    leaderboard 
+    transactions
   } = useAppStore();
 
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
-  const [selectedTimeRange, setSelectedTimeRange] = useState<string>('all');
-
-  // Check admin access
-  if (!currentUser || currentUser.role !== 'admin') {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <Award className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600">You need admin privileges to view this page.</p>
-        </div>
-      </div>
-    );
-  }
 
   // Calculate analytics
   const analytics = useMemo(() => {
@@ -90,7 +72,12 @@ export default function AdminDashboard() {
       acc[user.department].timeSaved += userAutomations.reduce((sum, a) => sum + (a.timeSavedPerExecution * a.totalExecutions), 0);
       
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, {
+      users: number;
+      automations: number;
+      creditsEarned: number;
+      timeSaved: number;
+    }>);
 
     // Category breakdown
     const categoryStats = automations
@@ -107,7 +94,11 @@ export default function AdminDashboard() {
         acc[automation.category].timeSaved += automation.timeSavedPerExecution * automation.totalExecutions;
         acc[automation.category].creditsEarned += automation.creditsEarned;
         return acc;
-      }, {} as Record<string, any>);
+      }, {} as Record<string, {
+        count: number;
+        timeSaved: number;
+        creditsEarned: number;
+      }>);
 
     // Reward category usage
     const rewardUsage = redemptions.reduce((acc, redemption) => {
@@ -123,7 +114,10 @@ export default function AdminDashboard() {
         acc[reward.category].creditsSpent += redemption.creditsCost;
       }
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, {
+      count: number;
+      creditsSpent: number;
+    }>);
 
     return {
       totalUsers,
@@ -142,6 +136,19 @@ export default function AdminDashboard() {
       roi: calculateROI(totalTimeSaved / 60, 75) // Assuming $75/hour average
     };
   }, [users, automations, transactions, redemptions, rewards]);
+
+  // Check admin access
+  if (!currentUser || currentUser.role !== 'admin') {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <Award className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">You need admin privileges to view this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   const departments = Object.keys(analytics.departmentStats);
 
@@ -248,7 +255,12 @@ export default function AdminDashboard() {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {Object.entries(analytics.departmentStats).map(([dept, stats]: [string, any]) => (
+              {Object.entries(analytics.departmentStats).map(([dept, stats]: [string, {
+                users: number;
+                automations: number;
+                creditsEarned: number;
+                timeSaved: number;
+              }]) => (
                 <div key={dept} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -285,9 +297,13 @@ export default function AdminDashboard() {
           <div className="p-6">
             <div className="space-y-3">
               {Object.entries(analytics.categoryStats)
-                .sort((a: any, b: any) => b[1].count - a[1].count)
+                .sort((a: [string, { count: number }], b: [string, { count: number }]) => b[1].count - a[1].count)
                 .slice(0, 6)
-                .map(([category, stats]: [string, any]) => (
+                .map(([category, stats]: [string, {
+                  count: number;
+                  timeSaved: number;
+                  creditsEarned: number;
+                }]) => (
                 <div key={category} className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
@@ -321,8 +337,11 @@ export default function AdminDashboard() {
           <div className="p-6">
             <div className="space-y-4">
               {Object.entries(analytics.rewardUsage)
-                .sort((a: any, b: any) => b[1].creditsSpent - a[1].creditsSpent)
-                .map(([category, usage]: [string, any]) => (
+                .sort((a: [string, { creditsSpent: number }], b: [string, { creditsSpent: number }]) => b[1].creditsSpent - a[1].creditsSpent)
+                .map(([category, usage]: [string, {
+                  count: number;
+                  creditsSpent: number;
+                }]) => (
                 <div key={category} className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">

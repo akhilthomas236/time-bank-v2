@@ -13,8 +13,7 @@ import {
 } from 'lucide-react';
 import { 
   AUTOMATION_CATEGORIES, 
-  AutomationFormData,
-  CREDIT_CONVERSION_RATE 
+  AutomationFormData
 } from '@/types';
 import { calculateCredits, validateAutomationForm } from '@/lib/utils';
 import Link from 'next/link';
@@ -41,7 +40,7 @@ export default function NewAutomationPage() {
     return <div>Loading...</div>;
   }
 
-  const handleInputChange = (field: keyof AutomationFormData, value: any) => {
+  const handleInputChange = (field: keyof AutomationFormData, value: string | number | File[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear errors when user starts typing
     if (errors.length > 0) {
@@ -122,7 +121,7 @@ export default function NewAutomationPage() {
 
       // Redirect to automations page
       router.push('/automations');
-    } catch (error) {
+    } catch {
       setErrors(['Failed to submit automation. Please try again.']);
     } finally {
       setIsSubmitting(false);

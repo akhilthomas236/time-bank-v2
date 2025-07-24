@@ -16,8 +16,7 @@ import {
   getLevelProgress, 
   formatDuration, 
   formatRelativeTime,
-  getBadgeRarityColor,
-  getStatusColor
+  getBadgeRarityColor
 } from '@/lib/utils';
 import Link from 'next/link';
 

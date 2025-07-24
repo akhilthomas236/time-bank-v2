@@ -141,7 +141,16 @@ export function getStatusColor(status: string): string {
 }
 
 // Validate automation form
-export function validateAutomationForm(data: any): string[] {
+interface AutomationFormData {
+  title?: string;
+  description?: string;
+  category?: string;
+  timeSavedPerExecution?: number;
+  executionFrequency?: number;
+  frequency?: string;
+}
+
+export function validateAutomationForm(data: AutomationFormData): string[] {
   const errors: string[] = [];
   
   if (!data.title?.trim()) {
@@ -197,7 +206,7 @@ export function getDepartmentColor(department: string): string {
 }
 
 // Sort array by multiple criteria
-export function sortBy<T>(array: T[], ...criteria: Array<(item: T) => any>): T[] {
+export function sortBy<T>(array: T[], ...criteria: Array<(item: T) => string | number>): T[] {
   return [...array].sort((a, b) => {
     for (const criterion of criteria) {
       const valueA = criterion(a);
@@ -211,7 +220,7 @@ export function sortBy<T>(array: T[], ...criteria: Array<(item: T) => any>): T[]
 }
 
 // Debounce function
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

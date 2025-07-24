@@ -2,17 +2,16 @@
 
 import { useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
+import { Automation } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Clock, 
   CheckCircle, 
   XCircle, 
   AlertCircle, 
   Search,
-  Filter,
   Download,
   Eye,
   User,
@@ -66,7 +65,7 @@ export default function AdminAutomationsPage() {
     rejectAutomation(automationId, 'Does not meet automation criteria');
   };
 
-  const AutomationCard = ({ automation }: { automation: any }) => {
+  const AutomationCard = ({ automation }: { automation: Automation }) => {
     const user = users.find(u => u.id === automation.userId);
     const totalTimeSaved = automation.timeSavedPerExecution * automation.totalExecutions;
     

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
+import { LeaderboardEntry } from '@/types';
 import { 
   Trophy, 
   Medal, 
@@ -41,7 +42,7 @@ export default function LeaderboardPage() {
         acc[user.department] = { ...userEntry, department: user.department };
       }
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, LeaderboardEntry & { department: string }>);
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy className="h-6 w-6 text-yellow-500" />;
@@ -200,7 +201,7 @@ export default function LeaderboardPage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Department Leaders</h3>
             <div className="space-y-3">
-              {Object.values(departmentLeaders).map((leader: any) => {
+              {Object.values(departmentLeaders).map((leader: LeaderboardEntry & { department: string }) => {
                 const user = users.find(u => u.id === leader.userId);
                 if (!user) return null;
                 
